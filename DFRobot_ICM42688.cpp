@@ -13,19 +13,24 @@
 
 #include <cmath>
 
-static inline void cs_select() {
+#include "pico/stdlib.h"
+
+static inline void cs_select()
+{
   asm volatile("nop \n nop \n nop");
-  gpio_put(PIN_CS, 0);  // Active low
+  gpio_put(PIN_CS, 0); // Active low
   asm volatile("nop \n nop \n nop");
 }
 
-static inline void cs_deselect() {
+static inline void cs_deselect()
+{
   asm volatile("nop \n nop \n nop");
   gpio_put(PIN_CS, 1);
   asm volatile("nop \n nop \n nop");
 }
 
-DFRobot_ICM42688::DFRobot_ICM42688() {
+DFRobot_ICM42688::DFRobot_ICM42688()
+{
   accelConfig0.accelODR = 6;
   accelConfig0.accelFsSel = 0;
   gyroConfig0.gyroODR = 6;
@@ -35,18 +40,21 @@ DFRobot_ICM42688::DFRobot_ICM42688() {
   FIFOMode = false;
 }
 
-int DFRobot_ICM42688::begin(void) {
+int DFRobot_ICM42688::begin(void)
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   uint8_t id = 0;
-  if (readReg(ICM42688_WHO_AM_I, &id, 1) == 0) {
+  if (readReg(ICM42688_WHO_AM_I, &id, 1) == 0)
+  {
     // DBG("bus data access error");
     return ERR_DATA_BUS;
   }
   DBG("real sensor id=");
   DBG(id);
-  if (id != DFRobot_ICM42688_ID) {
-    return ERR_IC_VERSION;
+  if (id != DFRobot_ICM42688_ID)
+  {
+    return id;
   }
   uint8_t reset = 0;
   writeReg(ICM42688_DEVICE_CONFIG, &reset, 1);
@@ -54,11 +62,15 @@ int DFRobot_ICM42688::begin(void) {
   return ERR_OK;
 }
 
-float DFRobot_ICM42688::getTemperature(void) {
+float DFRobot_ICM42688::getTemperature(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = (_temp / 2.07) + 25;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     int16_t value2;
     readReg(ICM42688_TEMP_DATA1, data, 2);
@@ -68,11 +80,15 @@ float DFRobot_ICM42688::getTemperature(void) {
   return value;
 }
 
-float DFRobot_ICM42688::getAccelDataX(void) {
+float DFRobot_ICM42688::getAccelDataX(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _accelX;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_ACCEL_DATA_X1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -81,11 +97,15 @@ float DFRobot_ICM42688::getAccelDataX(void) {
   return value * _accelRange;
 }
 
-float DFRobot_ICM42688::getAccelDataY(void) {
+float DFRobot_ICM42688::getAccelDataY(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _accelY;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_ACCEL_DATA_Y1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -94,11 +114,15 @@ float DFRobot_ICM42688::getAccelDataY(void) {
   return value * _accelRange;
 }
 
-float DFRobot_ICM42688::getAccelDataZ(void) {
+float DFRobot_ICM42688::getAccelDataZ(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _accelZ;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_ACCEL_DATA_Z1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -107,11 +131,15 @@ float DFRobot_ICM42688::getAccelDataZ(void) {
   return value * _accelRange;
 }
 
-float DFRobot_ICM42688::getGyroDataX(void) {
+float DFRobot_ICM42688::getGyroDataX(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _gyroX;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_GYRO_DATA_X1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -120,11 +148,15 @@ float DFRobot_ICM42688::getGyroDataX(void) {
   return value * _gyroRange;
 }
 
-float DFRobot_ICM42688::getGyroDataY(void) {
+float DFRobot_ICM42688::getGyroDataY(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _gyroY;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_GYRO_DATA_Y1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -133,11 +165,15 @@ float DFRobot_ICM42688::getGyroDataY(void) {
   return value * _gyroRange;
 }
 
-float DFRobot_ICM42688::getGyroDataZ(void) {
+float DFRobot_ICM42688::getGyroDataZ(void)
+{
   float value;
-  if (FIFOMode) {
+  if (FIFOMode)
+  {
     value = _gyroZ;
-  } else {
+  }
+  else
+  {
     uint8_t data[2];
     readReg(ICM42688_GYRO_DATA_Z1, data, 2);
     int16_t value1 = ((uint16_t)data[0] << 8) | (uint16_t)data[1];
@@ -146,10 +182,12 @@ float DFRobot_ICM42688::getGyroDataZ(void) {
   return value * _gyroRange;
 }
 
-void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode) {
+void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode)
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  if (accelMode == 0) {
+  if (accelMode == 0)
+  {
     accelConfig0.accelODR = 15;
     writeReg(ICM42688_ACCEL_CONFIG0, &accelConfig0, 1);
     PWRMgmt0.accelMode = 2;
@@ -161,7 +199,9 @@ void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode) {
     writeReg(ICM42688_ACCEL_CONFIG1, &accelConfig1, 1);
     gyroAccelConfig0.accelUIFiltBW = 0;
     writeReg(ICM42688_GYRO_ACCEL_CONFIG0, &gyroAccelConfig0, 1);
-  } else if (accelMode == 1) {
+  }
+  else if (accelMode == 1)
+  {
     accelConfig0.accelODR = 6;
     writeReg(ICM42688_ACCEL_CONFIG0, &accelConfig0, 1);
     PWRMgmt0.accelMode = 3;
@@ -171,7 +211,9 @@ void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode) {
     writeReg(ICM42688_ACCEL_CONFIG1, &accelConfig1, 1);
     gyroAccelConfig0.accelUIFiltBW = 0;
     writeReg(ICM42688_GYRO_ACCEL_CONFIG0, &gyroAccelConfig0, 1);
-  } else {
+  }
+  else
+  {
     DBG("accelMode invalid !");
     return;
   }
@@ -187,9 +229,12 @@ void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode) {
   writeReg(ICM42688_APEX_CONFIG7, &APEXConfig7, 1);
   sleep_ms(1);
   INTSource.tapDetIntEn = 1;
-  if (_INTPin == 1) {
+  if (_INTPin == 1)
+  {
     writeReg(ICM42688_INT_SOURCE6, &INTSource, 1);
-  } else {
+  }
+  else
+  {
     writeReg(ICM42688_INT_SOURCE7, &INTSource, 1);
   }
   sleep_ms(50);
@@ -198,7 +243,8 @@ void DFRobot_ICM42688::tapDetectionInit(uint8_t accelMode) {
   APEXConfig0.tapEnable = 1;
   writeReg(ICM42688_APEX_CONFIG0, &APEXConfig0, 1);
 }
-void DFRobot_ICM42688::getTapInformation() {
+void DFRobot_ICM42688::getTapInformation()
+{
   uint8_t data;
   readReg(ICM42688_APEX_DATA4, &data, 1);
   _tapNum = data & 0x18;
@@ -207,7 +253,8 @@ void DFRobot_ICM42688::getTapInformation() {
 }
 uint8_t DFRobot_ICM42688::numberOfTap() { return _tapNum; }
 uint8_t DFRobot_ICM42688::axisOfTap() { return _tapAxis; }
-void DFRobot_ICM42688::wakeOnMotionInit() {
+void DFRobot_ICM42688::wakeOnMotionInit()
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   accelConfig0.accelODR = 9;
@@ -219,17 +266,25 @@ void DFRobot_ICM42688::wakeOnMotionInit() {
   writeReg(ICM42688_INTF_CONFIG1, &INTFConfig1, 1);
   sleep_ms(1);
 }
-void DFRobot_ICM42688::setWOMTh(uint8_t axis, uint8_t threshold) {
+void DFRobot_ICM42688::setWOMTh(uint8_t axis, uint8_t threshold)
+{
   uint8_t bank = 4;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   uint8_t womValue = threshold;
-  if (axis == X_AXIS) {
+  if (axis == X_AXIS)
+  {
     writeReg(ICM42688_ACCEL_WOM_X_THR, &womValue, 1);
-  } else if (axis == Y_AXIS) {
+  }
+  else if (axis == Y_AXIS)
+  {
     writeReg(ICM42688_ACCEL_WOM_Y_THR, &womValue, 1);
-  } else if (axis == Z_AXIS) {
+  }
+  else if (axis == Z_AXIS)
+  {
     writeReg(ICM42688_ACCEL_WOM_Z_THR, &womValue, 1);
-  } else if (axis == ALL) {
+  }
+  else if (axis == ALL)
+  {
     writeReg(ICM42688_ACCEL_WOM_X_THR, &womValue, 1);
     writeReg(ICM42688_ACCEL_WOM_Y_THR, &womValue, 1);
     writeReg(ICM42688_ACCEL_WOM_Z_THR, &womValue, 1);
@@ -238,12 +293,16 @@ void DFRobot_ICM42688::setWOMTh(uint8_t axis, uint8_t threshold) {
   bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
 }
-void DFRobot_ICM42688::setWOMInterrupt(uint8_t axis) {
+void DFRobot_ICM42688::setWOMInterrupt(uint8_t axis)
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  if (_INTPin == 1) {
+  if (_INTPin == 1)
+  {
     writeReg(ICM42688_INT_SOURCE1, &axis, 1);
-  } else {
+  }
+  else
+  {
     writeReg(ICM42688_INT_SOURCE4, &axis, 1);
   }
   sleep_ms(50);
@@ -252,14 +311,19 @@ void DFRobot_ICM42688::setWOMInterrupt(uint8_t axis) {
   SMDConfig.WOMIntMode = 0;
   writeReg(ICM42688_SMD_CONFIG, &SMDConfig, 1);
 }
-void DFRobot_ICM42688::enableSMDInterrupt(uint8_t mode) {
+void DFRobot_ICM42688::enableSMDInterrupt(uint8_t mode)
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   uint8_t INT = 1 << 3;
-  if (mode != 0) {
-    if (_INTPin == 1) {
+  if (mode != 0)
+  {
+    if (_INTPin == 1)
+    {
       writeReg(ICM42688_INT_SOURCE1, &INT, 1);
-    } else {
+    }
+    else
+    {
       writeReg(ICM42688_INT_SOURCE4, &INT, 1);
     }
   }
@@ -270,7 +334,8 @@ void DFRobot_ICM42688::enableSMDInterrupt(uint8_t mode) {
   writeReg(ICM42688_SMD_CONFIG, &SMDConfig, 1);
 }
 
-uint8_t DFRobot_ICM42688::readInterruptStatus(uint8_t reg) {
+uint8_t DFRobot_ICM42688::readInterruptStatus(uint8_t reg)
+{
   uint8_t bank = 0;
   uint8_t status = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
@@ -278,71 +343,84 @@ uint8_t DFRobot_ICM42688::readInterruptStatus(uint8_t reg) {
   return status;
 }
 
-bool DFRobot_ICM42688::setODRAndFSR(uint8_t who, uint8_t ODR, uint8_t FSR) {
+bool DFRobot_ICM42688::setODRAndFSR(uint8_t who, uint8_t ODR, uint8_t FSR)
+{
   bool ret = true;
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  if (who == GYRO) {
-    if (ODR > ODR_12_5KHZ || FSR > FSR_7) {
+  if (who == GYRO)
+  {
+    if (ODR > ODR_12_5KHZ || FSR > FSR_7)
+    {
       ret = false;
-    } else {
+    }
+    else
+    {
       gyroConfig0.gyroODR = ODR;
       gyroConfig0.gyroFsSel = FSR;
       writeReg(ICM42688_GYRO_CONFIG0, &gyroConfig0, 1);
-      switch (FSR) {
-        case FSR_0:
-          _gyroRange = 4000 / 65535.0;
-          break;
-        case FSR_1:
-          _gyroRange = 2000 / 65535.0;
-          break;
-        case FSR_2:
-          _gyroRange = 1000 / 65535.0;
-          break;
-        case FSR_3:
-          _gyroRange = 500 / 65535.0;
-          break;
-        case FSR_4:
-          _gyroRange = 250 / 65535.0;
-          break;
-        case FSR_5:
-          _gyroRange = 125 / 65535.0;
-          break;
-        case FSR_6:
-          _gyroRange = 62.5 / 65535.0;
-          break;
-        case FSR_7:
-          _gyroRange = 31.25 / 65535.0;
-          break;
+      switch (FSR)
+      {
+      case FSR_0:
+        _gyroRange = 4000 / 65535.0;
+        break;
+      case FSR_1:
+        _gyroRange = 2000 / 65535.0;
+        break;
+      case FSR_2:
+        _gyroRange = 1000 / 65535.0;
+        break;
+      case FSR_3:
+        _gyroRange = 500 / 65535.0;
+        break;
+      case FSR_4:
+        _gyroRange = 250 / 65535.0;
+        break;
+      case FSR_5:
+        _gyroRange = 125 / 65535.0;
+        break;
+      case FSR_6:
+        _gyroRange = 62.5 / 65535.0;
+        break;
+      case FSR_7:
+        _gyroRange = 31.25 / 65535.0;
+        break;
       }
     }
-  } else if (who == ACCEL) {
-    if (ODR > ODR_500HZ || FSR > FSR_3) {
+  }
+  else if (who == ACCEL)
+  {
+    if (ODR > ODR_500HZ || FSR > FSR_3)
+    {
       ret = false;
-    } else {
+    }
+    else
+    {
       accelConfig0.accelODR = ODR;
       accelConfig0.accelFsSel = FSR;
       writeReg(ICM42688_ACCEL_CONFIG0, &accelConfig0, 1);
-      switch (FSR) {
-        case FSR_0:
-          _accelRange = 0.488f;
-          break;
-        case FSR_1:
-          _accelRange = 0.244f;
-          break;
-        case FSR_2:
-          _accelRange = 0.122f;
-          break;
-        case FSR_3:
-          _accelRange = 0.061f;
-          break;
+      switch (FSR)
+      {
+      case FSR_0:
+        _accelRange = 0.488f;
+        break;
+      case FSR_1:
+        _accelRange = 0.244f;
+        break;
+      case FSR_2:
+        _accelRange = 0.122f;
+        break;
+      case FSR_3:
+        _accelRange = 0.061f;
+        break;
       }
     }
   }
   return ret;
 }
 
-void DFRobot_ICM42688::setFIFODataMode() {
+void DFRobot_ICM42688::setFIFODataMode()
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   FIFOConfig1.FIFOHiresEn = 0;
@@ -353,7 +431,8 @@ void DFRobot_ICM42688::setFIFODataMode() {
   writeReg(ICM42688_FIFO_CONFIG1, &FIFOConfig1, 1);
 }
 
-void DFRobot_ICM42688::startFIFOMode() {
+void DFRobot_ICM42688::startFIFOMode()
+{
   uint8_t bank = 0;
   FIFOMode = true;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
@@ -362,7 +441,8 @@ void DFRobot_ICM42688::startFIFOMode() {
   writeReg(ICM42688_FIFO_CONFIG, &start, 1);
   getFIFOData();
 }
-void DFRobot_ICM42688::getFIFOData() {
+void DFRobot_ICM42688::getFIFOData()
+{
   uint8_t data[16];
   readReg(ICM42688_FIFO_DATA, data, 16);
   _accelX = (uint16_t)data[1] << 8 | (uint16_t)data[2];
@@ -380,7 +460,8 @@ void DFRobot_ICM42688::getFIFOData() {
   _temp = (uint8_t)data[13];
   // DBG("_temp");DBG(data[13]);
 }
-void DFRobot_ICM42688::sotpFIFOMode() {
+void DFRobot_ICM42688::sotpFIFOMode()
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   uint8_t start = 1 << 7;
@@ -389,15 +470,19 @@ void DFRobot_ICM42688::sotpFIFOMode() {
 
 void DFRobot_ICM42688::setINTMode(uint8_t INTPin, uint8_t INTmode,
                                   uint8_t INTPolarity,
-                                  uint8_t INTDriveCircuit) {
+                                  uint8_t INTDriveCircuit)
+{
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  if (INTPin == 1) {
+  if (INTPin == 1)
+  {
     _INTPin = 1;
     INTConfig.INT1Mode = INTmode;
     INTConfig.INT1DriveCirCuit = INTDriveCircuit;
     INTConfig.INT1Polarity = INTPolarity;
-  } else if (INTPin == 2) {
+  }
+  else if (INTPin == 2)
+  {
     _INTPin = 2;
     INTConfig.INT2Mode = INTmode;
     INTConfig.INT2DriveCirCuit = INTDriveCircuit;
@@ -406,14 +491,16 @@ void DFRobot_ICM42688::setINTMode(uint8_t INTPin, uint8_t INTmode,
   writeReg(ICM42688_INT_CONFIG, &INTConfig, 1);
 }
 
-void DFRobot_ICM42688::startTempMeasure() {
+void DFRobot_ICM42688::startTempMeasure()
+{
   PWRMgmt0.tempDis = 0;
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   writeReg(ICM42688_PWR_MGMT0, &PWRMgmt0, 1);
   sleep_ms(1);
 }
-void DFRobot_ICM42688::startGyroMeasure(uint8_t mode) {
+void DFRobot_ICM42688::startGyroMeasure(uint8_t mode)
+{
   PWRMgmt0.gyroMode = mode;
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
@@ -421,47 +508,62 @@ void DFRobot_ICM42688::startGyroMeasure(uint8_t mode) {
   sleep_ms(1);
 }
 
-void DFRobot_ICM42688::startAccelMeasure(uint8_t mode) {
+void DFRobot_ICM42688::startAccelMeasure(uint8_t mode)
+{
   PWRMgmt0.accelMode = mode;
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   writeReg(ICM42688_PWR_MGMT0, &PWRMgmt0, 1);
   sleep_ms(10);
 }
-void DFRobot_ICM42688::setGyroNotchFilterFHz(double freq, uint8_t axis) {
+void DFRobot_ICM42688::setGyroNotchFilterFHz(double freq, uint8_t axis)
+{
   uint8_t bank = 1;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   double fdesired = freq * 1000;
   double coswz = cos(2 * 3.14 * fdesired / 32);
   int16_t nfCoswz;
   uint8_t nfCoswzSel;
-  if (abs(coswz) <= 0.875) {
+  if (abs(coswz) <= 0.875)
+  {
     nfCoswz = round(coswz * 256);
     nfCoswzSel = 0;
-  } else {
+  }
+  else
+  {
     nfCoswzSel = 1;
-    if (coswz > 0.875) {
+    if (coswz > 0.875)
+    {
       nfCoswz = round(8 * (1 - coswz) * 256);
-    } else if (coswz < -0.875) {
+    }
+    else if (coswz < -0.875)
+    {
       nfCoswz = round(-8 * (1 + coswz) * 256);
     }
   }
-  if (axis == X_AXIS) {
+  if (axis == X_AXIS)
+  {
     gyroConfigStatic9.gyroNFCoswzSelX = nfCoswzSel;
     gyroConfigStatic9.gyroNFCoswzX8 = nfCoswz >> 8;
     writeReg(ICM42688_GYRO_CONFIG_STATIC6, &nfCoswz, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC9, &gyroConfigStatic9, 1);
-  } else if (axis == Y_AXIS) {
+  }
+  else if (axis == Y_AXIS)
+  {
     gyroConfigStatic9.gyroNFCoswzSelY = nfCoswzSel;
     gyroConfigStatic9.gyroNFCoswzY8 = nfCoswz >> 8;
     writeReg(ICM42688_GYRO_CONFIG_STATIC7, &nfCoswz, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC9, &gyroConfigStatic9, 1);
-  } else if (axis == Z_AXIS) {
+  }
+  else if (axis == Z_AXIS)
+  {
     gyroConfigStatic9.gyroNFCoswzSelZ = nfCoswzSel;
     gyroConfigStatic9.gyroNFCoswzZ8 = nfCoswz >> 8;
     writeReg(ICM42688_GYRO_CONFIG_STATIC8, &nfCoswz, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC9, &gyroConfigStatic9, 1);
-  } else if (axis == ALL) {
+  }
+  else if (axis == ALL)
+  {
     gyroConfigStatic9.gyroNFCoswzSelX = nfCoswzSel;
     gyroConfigStatic9.gyroNFCoswzX8 = nfCoswz >> 8;
     gyroConfigStatic9.gyroNFCoswzSelY = nfCoswzSel;
@@ -477,7 +579,8 @@ void DFRobot_ICM42688::setGyroNotchFilterFHz(double freq, uint8_t axis) {
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
 }
 
-void DFRobot_ICM42688::setGyroNFbandwidth(uint8_t bw) {
+void DFRobot_ICM42688::setGyroNFbandwidth(uint8_t bw)
+{
   uint8_t bank = 1;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   uint8_t bandWidth = (bw << 4) | 0x01;
@@ -486,10 +589,14 @@ void DFRobot_ICM42688::setGyroNFbandwidth(uint8_t bw) {
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
 }
 
-void DFRobot_ICM42688::setGyroNotchFilter(bool mode) {
-  if (mode) {
+void DFRobot_ICM42688::setGyroNotchFilter(bool mode)
+{
+  if (mode)
+  {
     gyroConfigStatic2.gyroNFDis = 0;
-  } else {
+  }
+  else
+  {
     gyroConfigStatic2.gyroNFDis = 1;
   }
   uint8_t bank = 1;
@@ -498,108 +605,183 @@ void DFRobot_ICM42688::setGyroNotchFilter(bool mode) {
   bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
 }
-void DFRobot_ICM42688::setAAFBandwidth(uint8_t who, uint8_t BWIndex) {
+void DFRobot_ICM42688::setAAFBandwidth(uint8_t who, uint8_t BWIndex)
+{
   uint8_t bank = 0;
   uint16_t AAFDeltsqr = BWIndex * BWIndex;
-  if (who == GYRO) {
+  if (who == GYRO)
+  {
     bank = 1;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC3, &BWIndex, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC4, &AAFDeltsqr, 1);
     gyroConfigStatic5.gyroAAFDeltsqr = AAFDeltsqr >> 8;
-    if (BWIndex == 1) {
+    if (BWIndex == 1)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 15;
-    } else if (BWIndex == 2) {
+    }
+    else if (BWIndex == 2)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 13;
-    } else if (BWIndex == 3) {
+    }
+    else if (BWIndex == 3)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 12;
-    } else if (BWIndex == 4) {
+    }
+    else if (BWIndex == 4)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 11;
-    } else if (BWIndex == 5 || BWIndex == 6) {
+    }
+    else if (BWIndex == 5 || BWIndex == 6)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 10;
-    } else if (BWIndex > 6 && BWIndex < 10) {
+    }
+    else if (BWIndex > 6 && BWIndex < 10)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 9;
-    } else if (BWIndex > 9 && BWIndex < 14) {
+    }
+    else if (BWIndex > 9 && BWIndex < 14)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 8;
-    } else if (BWIndex > 13 && BWIndex < 19) {
+    }
+    else if (BWIndex > 13 && BWIndex < 19)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 7;
-    } else if (BWIndex > 18 && BWIndex < 27) {
+    }
+    else if (BWIndex > 18 && BWIndex < 27)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 6;
-    } else if (BWIndex > 26 && BWIndex < 37) {
+    }
+    else if (BWIndex > 26 && BWIndex < 37)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 5;
-    } else if (BWIndex > 36 && BWIndex < 53) {
+    }
+    else if (BWIndex > 36 && BWIndex < 53)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 4;
-    } else if (BWIndex > 53 && BWIndex <= 63) {
+    }
+    else if (BWIndex > 53 && BWIndex <= 63)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 3;
     }
     writeReg(ICM42688_GYRO_CONFIG_STATIC5, &gyroConfigStatic5, 1);
     bank = 0;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  } else if (who == ACCEL) {
+  }
+  else if (who == ACCEL)
+  {
     bank = 2;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
     accelConfigStatic2.accelAAFDelt = BWIndex;
     writeReg(ICM42688_ACCEL_CONFIG_STATIC2, &accelConfigStatic2, 1);
     writeReg(ICM42688_ACCEL_CONFIG_STATIC3, &AAFDeltsqr, 1);
     accelConfigStatic4.accelAAFDeltsqr = AAFDeltsqr >> 8;
-    if (BWIndex == 1) {
+    if (BWIndex == 1)
+    {
       accelConfigStatic4.accelAAFBitshift = 15;
-    } else if (BWIndex == 2) {
+    }
+    else if (BWIndex == 2)
+    {
       accelConfigStatic4.accelAAFBitshift = 13;
-    } else if (BWIndex == 3) {
+    }
+    else if (BWIndex == 3)
+    {
       accelConfigStatic4.accelAAFBitshift = 12;
-    } else if (BWIndex == 4) {
+    }
+    else if (BWIndex == 4)
+    {
       accelConfigStatic4.accelAAFBitshift = 11;
-    } else if (BWIndex == 5 || BWIndex == 6) {
+    }
+    else if (BWIndex == 5 || BWIndex == 6)
+    {
       accelConfigStatic4.accelAAFBitshift = 10;
-    } else if (BWIndex > 6 && BWIndex < 10) {
+    }
+    else if (BWIndex > 6 && BWIndex < 10)
+    {
       accelConfigStatic4.accelAAFBitshift = 9;
-    } else if (BWIndex > 9 && BWIndex < 14) {
+    }
+    else if (BWIndex > 9 && BWIndex < 14)
+    {
       accelConfigStatic4.accelAAFBitshift = 8;
-    } else if (BWIndex > 13 && BWIndex < 19) {
+    }
+    else if (BWIndex > 13 && BWIndex < 19)
+    {
       accelConfigStatic4.accelAAFBitshift = 7;
-    } else if (BWIndex > 18 && BWIndex < 27) {
+    }
+    else if (BWIndex > 18 && BWIndex < 27)
+    {
       accelConfigStatic4.accelAAFBitshift = 6;
-    } else if (BWIndex > 26 && BWIndex < 37) {
+    }
+    else if (BWIndex > 26 && BWIndex < 37)
+    {
       accelConfigStatic4.accelAAFBitshift = 5;
-    } else if (BWIndex > 36 && BWIndex < 53) {
+    }
+    else if (BWIndex > 36 && BWIndex < 53)
+    {
       accelConfigStatic4.accelAAFBitshift = 4;
-    } else if (BWIndex > 53 && BWIndex <= 63) {
+    }
+    else if (BWIndex > 53 && BWIndex <= 63)
+    {
       accelConfigStatic4.accelAAFBitshift = 3;
     }
     writeReg(ICM42688_ACCEL_CONFIG_STATIC4, &accelConfigStatic4, 1);
 
     bank = 0;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  } else if (who == ALL) {
+  }
+  else if (who == ALL)
+  {
     bank = 1;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC3, &BWIndex, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC4, &AAFDeltsqr, 1);
     gyroConfigStatic5.gyroAAFDeltsqr = AAFDeltsqr >> 8;
-    if (BWIndex == 1) {
+    if (BWIndex == 1)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 15;
-    } else if (BWIndex == 2) {
+    }
+    else if (BWIndex == 2)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 13;
-    } else if (BWIndex == 3) {
+    }
+    else if (BWIndex == 3)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 12;
-    } else if (BWIndex == 4) {
+    }
+    else if (BWIndex == 4)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 11;
-    } else if (BWIndex == 5 || BWIndex == 6) {
+    }
+    else if (BWIndex == 5 || BWIndex == 6)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 10;
-    } else if (BWIndex > 6 && BWIndex < 10) {
+    }
+    else if (BWIndex > 6 && BWIndex < 10)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 9;
-    } else if (BWIndex > 9 && BWIndex < 14) {
+    }
+    else if (BWIndex > 9 && BWIndex < 14)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 8;
-    } else if (BWIndex > 13 && BWIndex < 19) {
+    }
+    else if (BWIndex > 13 && BWIndex < 19)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 7;
-    } else if (BWIndex > 18 && BWIndex < 27) {
+    }
+    else if (BWIndex > 18 && BWIndex < 27)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 6;
-    } else if (BWIndex > 26 && BWIndex < 37) {
+    }
+    else if (BWIndex > 26 && BWIndex < 37)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 5;
-    } else if (BWIndex > 36 && BWIndex < 53) {
+    }
+    else if (BWIndex > 36 && BWIndex < 53)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 4;
-    } else if (BWIndex > 53 && BWIndex <= 63) {
+    }
+    else if (BWIndex > 53 && BWIndex <= 63)
+    {
       gyroConfigStatic5.gyroAAFBitshift = 3;
     }
     writeReg(ICM42688_GYRO_CONFIG_STATIC5, &gyroConfigStatic5, 1);
@@ -609,29 +791,52 @@ void DFRobot_ICM42688::setAAFBandwidth(uint8_t who, uint8_t BWIndex) {
     writeReg(ICM42688_ACCEL_CONFIG_STATIC2, &accelConfigStatic2, 1);
     writeReg(ICM42688_ACCEL_CONFIG_STATIC3, &AAFDeltsqr, 1);
     accelConfigStatic4.accelAAFDeltsqr = AAFDeltsqr >> 8;
-    if (BWIndex == 1) {
+    if (BWIndex == 1)
+    {
       accelConfigStatic4.accelAAFBitshift = 15;
-    } else if (BWIndex == 2) {
+    }
+    else if (BWIndex == 2)
+    {
       accelConfigStatic4.accelAAFBitshift = 13;
-    } else if (BWIndex == 3) {
+    }
+    else if (BWIndex == 3)
+    {
       accelConfigStatic4.accelAAFBitshift = 12;
-    } else if (BWIndex == 4) {
+    }
+    else if (BWIndex == 4)
+    {
       accelConfigStatic4.accelAAFBitshift = 11;
-    } else if (BWIndex == 5 || BWIndex == 6) {
+    }
+    else if (BWIndex == 5 || BWIndex == 6)
+    {
       accelConfigStatic4.accelAAFBitshift = 10;
-    } else if (BWIndex > 6 && BWIndex < 10) {
+    }
+    else if (BWIndex > 6 && BWIndex < 10)
+    {
       accelConfigStatic4.accelAAFBitshift = 9;
-    } else if (BWIndex > 9 && BWIndex < 14) {
+    }
+    else if (BWIndex > 9 && BWIndex < 14)
+    {
       accelConfigStatic4.accelAAFBitshift = 8;
-    } else if (BWIndex > 13 && BWIndex < 19) {
+    }
+    else if (BWIndex > 13 && BWIndex < 19)
+    {
       accelConfigStatic4.accelAAFBitshift = 7;
-    } else if (BWIndex > 18 && BWIndex < 27) {
+    }
+    else if (BWIndex > 18 && BWIndex < 27)
+    {
       accelConfigStatic4.accelAAFBitshift = 6;
-    } else if (BWIndex > 26 && BWIndex < 37) {
+    }
+    else if (BWIndex > 26 && BWIndex < 37)
+    {
       accelConfigStatic4.accelAAFBitshift = 5;
-    } else if (BWIndex > 36 && BWIndex < 53) {
+    }
+    else if (BWIndex > 36 && BWIndex < 53)
+    {
       accelConfigStatic4.accelAAFBitshift = 4;
-    } else if (BWIndex > 53 && BWIndex <= 63) {
+    }
+    else if (BWIndex > 53 && BWIndex <= 63)
+    {
       accelConfigStatic4.accelAAFBitshift = 3;
     }
     writeReg(ICM42688_ACCEL_CONFIG_STATIC4, &accelConfigStatic4, 1);
@@ -639,31 +844,46 @@ void DFRobot_ICM42688::setAAFBandwidth(uint8_t who, uint8_t BWIndex) {
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
   }
 }
-void DFRobot_ICM42688::setAAF(uint8_t who, bool mode) {
+void DFRobot_ICM42688::setAAF(uint8_t who, bool mode)
+{
   uint8_t bank = 0;
-  if (who == GYRO) {
-    if (mode) {
+  if (who == GYRO)
+  {
+    if (mode)
+    {
       gyroConfigStatic2.gyroAAFDis = 0;
-    } else {
+    }
+    else
+    {
       gyroConfigStatic2.gyroAAFDis = 1;
     }
     bank = 1;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
     writeReg(ICM42688_GYRO_CONFIG_STATIC2, &gyroConfigStatic2, 1);
-  } else if (who == ACCEL) {
-    if (mode) {
+  }
+  else if (who == ACCEL)
+  {
+    if (mode)
+    {
       accelConfigStatic2.accelAAFDis = 0;
-    } else {
+    }
+    else
+    {
       accelConfigStatic2.accelAAFDis = 1;
     }
     bank = 2;
     writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
     writeReg(ICM42688_ACCEL_CONFIG_STATIC2, &accelConfigStatic2, 1);
-  } else if (who == ALL) {
-    if (mode) {
+  }
+  else if (who == ALL)
+  {
+    if (mode)
+    {
       gyroConfigStatic2.gyroAAFDis = 0;
       accelConfigStatic2.accelAAFDis = 0;
-    } else {
+    }
+    else
+    {
       gyroConfigStatic2.gyroAAFDis = 1;
       accelConfigStatic2.accelAAFDis = 1;
     }
@@ -679,24 +899,33 @@ void DFRobot_ICM42688::setAAF(uint8_t who, bool mode) {
 }
 
 bool DFRobot_ICM42688::setUIFilter(uint8_t who, uint8_t filterOrder,
-                                   uint8_t UIFilterIndex) {
+                                   uint8_t UIFilterIndex)
+{
   bool ret = true;
   uint8_t bank = 0;
   writeReg(ICM42688_REG_BANK_SEL, &bank, 1);
-  if (filterOrder > 3 || UIFilterIndex > 15) {
+  if (filterOrder > 3 || UIFilterIndex > 15)
+  {
     ret = false;
-  } else {
-    if (who == GYRO) {
+  }
+  else
+  {
+    if (who == GYRO)
+    {
       gyroConfig1.gyroUIFiltODR = filterOrder;
       writeReg(ICM42688_GYRO_CONFIG1, &gyroConfig1, 1);
       gyroAccelConfig0.gyroUIFiltBW = UIFilterIndex;
       writeReg(ICM42688_GYRO_ACCEL_CONFIG0, &gyroAccelConfig0, 1);
-    } else if (who == ACCEL) {
+    }
+    else if (who == ACCEL)
+    {
       accelConfig1.accelUIFiltORD = filterOrder;
       writeReg(ICM42688_ACCEL_CONFIG1, &accelConfig1, 1);
       gyroAccelConfig0.accelUIFiltBW = UIFilterIndex;
       writeReg(ICM42688_GYRO_ACCEL_CONFIG0, &gyroAccelConfig0, 1);
-    } else if (who == ALL) {
+    }
+    else if (who == ALL)
+    {
       gyroConfig1.gyroUIFiltODR = filterOrder;
       writeReg(ICM42688_GYRO_CONFIG1, &gyroConfig1, 1);
       accelConfig1.accelUIFiltORD = filterOrder;
@@ -751,7 +980,8 @@ bool DFRobot_ICM42688::setUIFilter(uint8_t who, uint8_t filterOrder,
 
 DFRobot_ICM42688_SPI::DFRobot_ICM42688_SPI(uint8_t csPin) { _csPin = csPin; }
 
-int DFRobot_ICM42688_SPI::begin(void) {
+int DFRobot_ICM42688_SPI::begin(void)
+{
   stdio_init_all();
 
   // This example will use SPI0 at 1MHz.
@@ -768,8 +998,10 @@ int DFRobot_ICM42688_SPI::begin(void) {
   return DFRobot_ICM42688::begin();
 }
 
-void DFRobot_ICM42688_SPI::writeReg(uint8_t reg, void *pBuf, size_t size) {
-  if (pBuf == NULL) {
+void DFRobot_ICM42688_SPI::writeReg(uint8_t reg, void *pBuf, size_t size)
+{
+  if (pBuf == NULL)
+  {
     DBG("pBuf ERROR!! : null pointer");
   }
   uint8_t *_pBuf = (uint8_t *)pBuf;
@@ -779,15 +1011,17 @@ void DFRobot_ICM42688_SPI::writeReg(uint8_t reg, void *pBuf, size_t size) {
   cs_deselect();
 }
 
-uint8_t DFRobot_ICM42688_SPI::readReg(uint8_t reg, void *pBuf, size_t size) {
-  if (pBuf == NULL) {
+uint8_t DFRobot_ICM42688_SPI::readReg(uint8_t reg, void *pBuf, size_t size)
+{
+  if (pBuf == NULL)
+  {
     DBG("pBuf ERROR!! : null pointer");
   }
   uint8_t *_pBuf = (uint8_t *)pBuf;
   size_t count = 0;
 
-  cs_select();
   reg |= READ_BIT;
+  cs_select();
   spi_write_blocking(SPI_PORT, &reg, 1);
   count = spi_read_blocking(SPI_PORT, 0, _pBuf, size);
   cs_deselect();

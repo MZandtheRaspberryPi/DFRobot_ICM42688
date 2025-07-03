@@ -14,10 +14,10 @@
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 
-#define PIN_MISO 4
-#define PIN_CS 5
-#define PIN_SCK 6
-#define PIN_MOSI 7
+#define PIN_MISO 28
+#define PIN_CS 29
+#define PIN_SCK 26
+#define PIN_MOSI 27
 
 #define SPI_PORT spi0
 #define READ_BIT 0x80
@@ -189,11 +189,12 @@
 #define ICM42688_STATUS_WALK 1
 #define ICM42688_STATUS_RUN 2
 
-class DFRobot_ICM42688 {
- public:
-#define ERR_OK 0           ///< No error
-#define ERR_DATA_BUS -1    ///< Data bus error
-#define ERR_IC_VERSION -2  ///< The chip version not match
+class DFRobot_ICM42688
+{
+public:
+#define ERR_OK 0          ///< No error
+#define ERR_DATA_BUS -1   ///< Data bus error
+#define ERR_IC_VERSION -2 ///< The chip version not match
 
 #define GYRO 0
 #define ACCEL 1
@@ -274,7 +275,8 @@ class DFRobot_ICM42688 {
    * is latched into the time stamp register. This is a write on clear bit.
    * @n        FIFO_FLUSH : When set to 1, FIFO will get flushed.
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t reserved0 : 1;
     uint8_t FIFOFlush : 1;
     uint8_t TMSTStrobe : 1;
@@ -317,7 +319,8 @@ class DFRobot_ICM42688 {
    * @n                10: 50Hz
    * @n                11: Reserved
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t dmpODR : 2;
     uint8_t reserved : 1;
     uint8_t R2WEn : 1;
@@ -370,7 +373,8 @@ class DFRobot_ICM42688 {
    * @n                   1110: 1.5625Hz (LP mode)
    * @n                   1111: 500Hz (LP or LN mode)
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t accelODR : 4;
     uint8_t reserved : 1;
     uint8_t accelFsSel : 3;
@@ -418,7 +422,8 @@ class DFRobot_ICM42688 {
    * @n                  1110: Reserved
    * @n                  1111: 500Hz
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroODR : 4;
     uint8_t reserved : 1;
     uint8_t gyroFsSel : 3;
@@ -460,7 +465,8 @@ class DFRobot_ICM42688 {
    * @n                          10: 3rd Order
    * @n                          11: Reserved
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroDec2M2ODR : 2;
     uint8_t gyroUIFiltODR : 2;
     uint8_t reserved : 1;
@@ -503,7 +509,8 @@ class DFRobot_ICM42688 {
    * @n                    When transitioning from OFF to any of the other
    * modes, do not issue any register writes for 200µs
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t accelMode : 2;
     uint8_t gyroMode : 2;
     uint8_t idle : 1;
@@ -550,7 +557,8 @@ class DFRobot_ICM42688 {
    * @n                     10: Disable SPI
    * @n                     11: Disable I2C
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t UISifsConfig : 2;
     uint8_t reserved : 2;
     uint8_t sensorDataEndian : 1;
@@ -586,7 +594,8 @@ class DFRobot_ICM42688 {
    * @n                 10: Reserved
    * @n                 11: Disable all clocks
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t clksel : 2;
     uint8_t rtcMode : 1;
     uint8_t accelLpClkSel : 1;
@@ -620,7 +629,8 @@ class DFRobot_ICM42688 {
    * @n                            10: 3rd order
    * @n                            11: Reserved
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t reserved : 1;
     uint8_t accelDec2M2ORD : 2;
     uint8_t accelUIFiltORD : 2;
@@ -681,7 +691,8 @@ class DFRobot_ICM42688 {
    * @n                            15 Low Latency option: Trivial decimation @
    * ODR of Dec2 filter output. Dec2 runs at max(200Hz, 8*ODR)
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroUIFiltBW : 4;
     uint8_t accelUIFiltBW : 4;
   } __attribute__((packed)) sGyroAccelConfig0_t;
@@ -704,7 +715,8 @@ class DFRobot_ICM42688 {
    * @n        TAP_MAX_PEAK_TOL  Point detection maximum peak tolerance, use
    * default value 01b
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t tapMaxPeakTol : 2;
     uint8_t tapMinJerkThr : 6;
   } __attribute__((packed)) sAPEXConfig7_t;
@@ -730,7 +742,8 @@ class DFRobot_ICM42688 {
    * @n        TAP_TMIN  Single tap window (number of samples), use default
    * value 011b
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t tapTmin : 3;
     uint8_t tapTavg : 2;
     uint8_t tapTmax : 2;
@@ -768,7 +781,8 @@ class DFRobot_ICM42688 {
    * @n                        110: 8.96sec
    * @n                        111: 10.24sec
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t reserved : 3;
     uint8_t sleepTimeOut : 3;
     uint8_t tiltWaitTimeSel : 2;
@@ -802,7 +816,8 @@ class DFRobot_ICM42688 {
    * @n                  11: SMD long (3 sec wait) An SMD event is detected when
    * two WOM are detected 3 sec apart
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t SMDMode : 2;
     uint8_t WOMMode : 1;
     uint8_t WOMIntMode : 1;
@@ -837,7 +852,8 @@ class DFRobot_ICM42688 {
    * @n        GYRO_X_NF_COSWZ[8] :Used for gyroscope X-axis notch filter
    * frequency selection
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroNFCoswzX8 : 1;
     uint8_t gyroNFCoswzY8 : 1;
     uint8_t gyroNFCoswzZ8 : 1;
@@ -866,7 +882,8 @@ class DFRobot_ICM42688 {
    * @n        GYRO_NF_DIS   0: Enable Notch Filter (default)
    * @n                      1: Disable Notch Filter
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroNFDis : 1;
     uint8_t gyroAAFDis : 1;
     uint8_t reserved : 6;
@@ -892,7 +909,8 @@ class DFRobot_ICM42688 {
    * @n         GYRO_AAF_DELTSQR[11:8]   Controls bandwidth of the gyroscope
    * anti-alias filter
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t gyroAAFDeltsqr : 4;
     uint8_t gyroAAFBitshift : 4;
   } __attribute__((packed)) sGyroConfigStatic5_t;
@@ -916,7 +934,8 @@ class DFRobot_ICM42688 {
    * (default)
    * @n                        1: Disable accelerometer anti-aliasing filter
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t accelAAFDis : 1;
     uint8_t accelAAFDelt : 6;
     uint8_t reserved : 1;
@@ -941,7 +960,8 @@ class DFRobot_ICM42688 {
    * @n        ACCEL_AAF_DELTSQR[11:8]  Controls bandwidth of the accelerometer
    * anti-alias filter
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t accelAAFDeltsqr : 4;
     uint8_t accelAAFBitshift : 4;
   } __attribute__((packed)) sAccelConfigStatic4_t;
@@ -977,7 +997,8 @@ class DFRobot_ICM42688 {
    * @n        FIFO_GYRO_EN  Enable gyroscope packets to go to FIFO
    * @n        FIFO_ACCEL_EN  Enable accelerometer packets to go to FIFO
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t FIFOAccelEn : 1;
     uint8_t FIFOGyroEn : 1;
     uint8_t FIFOTempEn : 1;
@@ -1018,7 +1039,8 @@ class DFRobot_ICM42688 {
    * @n        TMST_EN 0: Time Stamp register disable
    * @n                1: Time Stamp register enable (default)
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t TimeStampEn : 1;
     uint8_t TimeStampFSYNCEn : 1;
     uint8_t TimeStampDeltaEn : 1;
@@ -1059,7 +1081,8 @@ class DFRobot_ICM42688 {
    * @n                           0: Active low (default)
    * @n                           1: Active high
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t INT1Polarity : 1;
     uint8_t INT1DriveCirCuit : 1;
     uint8_t INT1Mode : 1;
@@ -1084,7 +1107,8 @@ class DFRobot_ICM42688 {
    * @n
    * ---------------------------------------------------------------------------------------------------------------------------------------------
    */
-  typedef struct {
+  typedef struct
+  {
     uint8_t tapDetIntEn : 1;
     uint8_t sleepDetIntEn : 1;
     uint8_t wakeDetIntEn : 1;
@@ -1094,7 +1118,7 @@ class DFRobot_ICM42688 {
     uint8_t reserved : 2;
   } __attribute__((packed)) sINTSource_t;
 
- public:
+public:
   /**
    * @fn DFRobot_ICM42688
    * @brief Constructor
@@ -1349,7 +1373,7 @@ class DFRobot_ICM42688 {
    */
   void startTempMeasure();
 
- protected:
+protected:
   /**
    * @fn setFIFODataMode
    * @brief Set FIFO data packet format
@@ -1364,7 +1388,7 @@ class DFRobot_ICM42688 {
    * @param pBuf Storage and buffer for data to be written
    * @param size Length of data to be written
    */
-  virtual void writeReg(uint8_t reg, void* pBuf, size_t size) = 0;
+  virtual void writeReg(uint8_t reg, void *pBuf, size_t size) = 0;
 
   /**
    * @fn readReg
@@ -1375,9 +1399,9 @@ class DFRobot_ICM42688 {
    * @param size Read data length
    * @return return the read length, returning 0 means length reading failed
    */
-  virtual uint8_t readReg(uint8_t reg, void* pBuf, size_t size) = 0;
+  virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size) = 0;
 
- private:
+private:
   /**
    * @fn setGyroNotchFilterFHz
    * @brief Set gyroscope notch filter frequency
@@ -1454,7 +1478,7 @@ class DFRobot_ICM42688 {
    */
   bool setUIFilter(uint8_t who, uint8_t filterOrder, uint8_t UIFilterIndex);
 
- private:
+private:
   uint8_t _r, _g, _b;
   uint8_t _mode;
   uint8_t _tapNum;
@@ -1497,8 +1521,9 @@ static inline void cs_select();
 
 static inline void cs_deselect();
 
-class DFRobot_ICM42688_I2C : public DFRobot_ICM42688 {
- public:
+class DFRobot_ICM42688_I2C : public DFRobot_ICM42688
+{
+public:
   DFRobot_ICM42688_I2C(uint8_t i2cAddr);
   /**
    * @fn begin
@@ -1510,7 +1535,7 @@ class DFRobot_ICM42688_I2C : public DFRobot_ICM42688 {
    */
   int begin(void);
 
- protected:
+protected:
   /**
    * @fn writeReg
    * @brief Write register values through I2C bus
@@ -1519,7 +1544,7 @@ class DFRobot_ICM42688_I2C : public DFRobot_ICM42688 {
    * @param size Length of data to be written
    * @return Return the read length, returning 0 means length reading failed
    */
-  virtual void writeReg(uint8_t reg, void* pBuf, size_t size);
+  virtual void writeReg(uint8_t reg, void *pBuf, size_t size);
 
   /**
    * @fn readReg
@@ -1529,14 +1554,15 @@ class DFRobot_ICM42688_I2C : public DFRobot_ICM42688 {
    * @param size Length of data to be read
    * @return Return the read length, returning 0 means length reading failed
    */
-  virtual uint8_t readReg(uint8_t reg, void* pBuf, size_t size);
+  virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size);
 
- private:
+private:
   uint8_t _deviceAddr;
 };
 
-class DFRobot_ICM42688_SPI : public DFRobot_ICM42688 {
- public:
+class DFRobot_ICM42688_SPI : public DFRobot_ICM42688
+{
+public:
   DFRobot_ICM42688_SPI(uint8_t csPin = 5);
   /**
    * @fn begin
@@ -1548,7 +1574,7 @@ class DFRobot_ICM42688_SPI : public DFRobot_ICM42688 {
    */
   int begin(void);
 
- protected:
+protected:
   /**
    * @fn writeReg
    * @brief Write register value through SPI bus
@@ -1556,7 +1582,7 @@ class DFRobot_ICM42688_SPI : public DFRobot_ICM42688 {
    * @param pBuf Storage and buffer for data to be written
    * @param size Length of data to be written
    */
-  virtual void writeReg(uint8_t reg, void* pBuf, size_t size);
+  virtual void writeReg(uint8_t reg, void *pBuf, size_t size);
 
   /**
    * @fn readReg
@@ -1566,9 +1592,9 @@ class DFRobot_ICM42688_SPI : public DFRobot_ICM42688 {
    * @param size Length of data to be read
    * @return Return the read length, returning 0 means length reading failed
    */
-  virtual uint8_t readReg(uint8_t reg, void* pBuf, size_t size);
+  virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size);
 
- private:
+private:
   uint8_t _csPin;
 };
 #endif
