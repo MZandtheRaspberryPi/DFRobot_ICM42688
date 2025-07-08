@@ -19,7 +19,7 @@
 #define PIN_SCK 26
 #define PIN_MOSI 27
 
-#define SPI_PORT spi0
+#define SPI_PORT spi1
 #define READ_BIT 0x80
 
 // Open this macro and you can see the details of the program
@@ -189,12 +189,12 @@
 #define ICM42688_STATUS_WALK 1
 #define ICM42688_STATUS_RUN 2
 
-class DFRobot_ICM42688
-{
-public:
-#define ERR_OK 0          ///< No error
-#define ERR_DATA_BUS -1   ///< Data bus error
-#define ERR_IC_VERSION -2 ///< The chip version not match
+class DFRobot_ICM42688 {
+ public:
+  uint8_t readRandomReg(uint8_t bank, uint8_t reg, uint8_t *buff, uint8_t len);
+#define ERR_OK 0           ///< No error
+#define ERR_DATA_BUS -1    ///< Data bus error
+#define ERR_IC_VERSION -2  ///< The chip version not match
 
 #define GYRO 0
 #define ACCEL 1
@@ -275,8 +275,7 @@ public:
    * is latched into the time stamp register. This is a write on clear bit.
    * @n        FIFO_FLUSH : When set to 1, FIFO will get flushed.
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t reserved0 : 1;
     uint8_t FIFOFlush : 1;
     uint8_t TMSTStrobe : 1;
@@ -319,8 +318,7 @@ public:
    * @n                10: 50Hz
    * @n                11: Reserved
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t dmpODR : 2;
     uint8_t reserved : 1;
     uint8_t R2WEn : 1;
@@ -373,8 +371,7 @@ public:
    * @n                   1110: 1.5625Hz (LP mode)
    * @n                   1111: 500Hz (LP or LN mode)
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t accelODR : 4;
     uint8_t reserved : 1;
     uint8_t accelFsSel : 3;
@@ -422,8 +419,7 @@ public:
    * @n                  1110: Reserved
    * @n                  1111: 500Hz
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroODR : 4;
     uint8_t reserved : 1;
     uint8_t gyroFsSel : 3;
@@ -465,8 +461,7 @@ public:
    * @n                          10: 3rd Order
    * @n                          11: Reserved
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroDec2M2ODR : 2;
     uint8_t gyroUIFiltODR : 2;
     uint8_t reserved : 1;
@@ -509,8 +504,7 @@ public:
    * @n                    When transitioning from OFF to any of the other
    * modes, do not issue any register writes for 200µs
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t accelMode : 2;
     uint8_t gyroMode : 2;
     uint8_t idle : 1;
@@ -557,8 +551,7 @@ public:
    * @n                     10: Disable SPI
    * @n                     11: Disable I2C
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t UISifsConfig : 2;
     uint8_t reserved : 2;
     uint8_t sensorDataEndian : 1;
@@ -594,8 +587,7 @@ public:
    * @n                 10: Reserved
    * @n                 11: Disable all clocks
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t clksel : 2;
     uint8_t rtcMode : 1;
     uint8_t accelLpClkSel : 1;
@@ -629,8 +621,7 @@ public:
    * @n                            10: 3rd order
    * @n                            11: Reserved
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t reserved : 1;
     uint8_t accelDec2M2ORD : 2;
     uint8_t accelUIFiltORD : 2;
@@ -691,8 +682,7 @@ public:
    * @n                            15 Low Latency option: Trivial decimation @
    * ODR of Dec2 filter output. Dec2 runs at max(200Hz, 8*ODR)
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroUIFiltBW : 4;
     uint8_t accelUIFiltBW : 4;
   } __attribute__((packed)) sGyroAccelConfig0_t;
@@ -715,8 +705,7 @@ public:
    * @n        TAP_MAX_PEAK_TOL  Point detection maximum peak tolerance, use
    * default value 01b
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t tapMaxPeakTol : 2;
     uint8_t tapMinJerkThr : 6;
   } __attribute__((packed)) sAPEXConfig7_t;
@@ -742,8 +731,7 @@ public:
    * @n        TAP_TMIN  Single tap window (number of samples), use default
    * value 011b
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t tapTmin : 3;
     uint8_t tapTavg : 2;
     uint8_t tapTmax : 2;
@@ -781,8 +769,7 @@ public:
    * @n                        110: 8.96sec
    * @n                        111: 10.24sec
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t reserved : 3;
     uint8_t sleepTimeOut : 3;
     uint8_t tiltWaitTimeSel : 2;
@@ -816,8 +803,7 @@ public:
    * @n                  11: SMD long (3 sec wait) An SMD event is detected when
    * two WOM are detected 3 sec apart
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t SMDMode : 2;
     uint8_t WOMMode : 1;
     uint8_t WOMIntMode : 1;
@@ -852,8 +838,7 @@ public:
    * @n        GYRO_X_NF_COSWZ[8] :Used for gyroscope X-axis notch filter
    * frequency selection
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroNFCoswzX8 : 1;
     uint8_t gyroNFCoswzY8 : 1;
     uint8_t gyroNFCoswzZ8 : 1;
@@ -882,8 +867,7 @@ public:
    * @n        GYRO_NF_DIS   0: Enable Notch Filter (default)
    * @n                      1: Disable Notch Filter
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroNFDis : 1;
     uint8_t gyroAAFDis : 1;
     uint8_t reserved : 6;
@@ -909,8 +893,7 @@ public:
    * @n         GYRO_AAF_DELTSQR[11:8]   Controls bandwidth of the gyroscope
    * anti-alias filter
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t gyroAAFDeltsqr : 4;
     uint8_t gyroAAFBitshift : 4;
   } __attribute__((packed)) sGyroConfigStatic5_t;
@@ -934,8 +917,7 @@ public:
    * (default)
    * @n                        1: Disable accelerometer anti-aliasing filter
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t accelAAFDis : 1;
     uint8_t accelAAFDelt : 6;
     uint8_t reserved : 1;
@@ -960,8 +942,7 @@ public:
    * @n        ACCEL_AAF_DELTSQR[11:8]  Controls bandwidth of the accelerometer
    * anti-alias filter
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t accelAAFDeltsqr : 4;
     uint8_t accelAAFBitshift : 4;
   } __attribute__((packed)) sAccelConfigStatic4_t;
@@ -997,8 +978,7 @@ public:
    * @n        FIFO_GYRO_EN  Enable gyroscope packets to go to FIFO
    * @n        FIFO_ACCEL_EN  Enable accelerometer packets to go to FIFO
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t FIFOAccelEn : 1;
     uint8_t FIFOGyroEn : 1;
     uint8_t FIFOTempEn : 1;
@@ -1039,8 +1019,7 @@ public:
    * @n        TMST_EN 0: Time Stamp register disable
    * @n                1: Time Stamp register enable (default)
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t TimeStampEn : 1;
     uint8_t TimeStampFSYNCEn : 1;
     uint8_t TimeStampDeltaEn : 1;
@@ -1081,8 +1060,7 @@ public:
    * @n                           0: Active low (default)
    * @n                           1: Active high
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t INT1Polarity : 1;
     uint8_t INT1DriveCirCuit : 1;
     uint8_t INT1Mode : 1;
@@ -1107,8 +1085,7 @@ public:
    * @n
    * ---------------------------------------------------------------------------------------------------------------------------------------------
    */
-  typedef struct
-  {
+  typedef struct {
     uint8_t tapDetIntEn : 1;
     uint8_t sleepDetIntEn : 1;
     uint8_t wakeDetIntEn : 1;
@@ -1118,7 +1095,7 @@ public:
     uint8_t reserved : 2;
   } __attribute__((packed)) sINTSource_t;
 
-public:
+ public:
   /**
    * @fn DFRobot_ICM42688
    * @brief Constructor
@@ -1373,7 +1350,7 @@ public:
    */
   void startTempMeasure();
 
-protected:
+ protected:
   /**
    * @fn setFIFODataMode
    * @brief Set FIFO data packet format
@@ -1401,7 +1378,7 @@ protected:
    */
   virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size) = 0;
 
-private:
+ private:
   /**
    * @fn setGyroNotchFilterFHz
    * @brief Set gyroscope notch filter frequency
@@ -1478,7 +1455,7 @@ private:
    */
   bool setUIFilter(uint8_t who, uint8_t filterOrder, uint8_t UIFilterIndex);
 
-private:
+ private:
   uint8_t _r, _g, _b;
   uint8_t _mode;
   uint8_t _tapNum;
@@ -1521,9 +1498,8 @@ static inline void cs_select();
 
 static inline void cs_deselect();
 
-class DFRobot_ICM42688_I2C : public DFRobot_ICM42688
-{
-public:
+class DFRobot_ICM42688_I2C : public DFRobot_ICM42688 {
+ public:
   DFRobot_ICM42688_I2C(uint8_t i2cAddr);
   /**
    * @fn begin
@@ -1535,7 +1511,7 @@ public:
    */
   int begin(void);
 
-protected:
+ protected:
   /**
    * @fn writeReg
    * @brief Write register values through I2C bus
@@ -1556,13 +1532,12 @@ protected:
    */
   virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size);
 
-private:
+ private:
   uint8_t _deviceAddr;
 };
 
-class DFRobot_ICM42688_SPI : public DFRobot_ICM42688
-{
-public:
+class DFRobot_ICM42688_SPI : public DFRobot_ICM42688 {
+ public:
   DFRobot_ICM42688_SPI(uint8_t csPin = 5);
   /**
    * @fn begin
@@ -1574,7 +1549,7 @@ public:
    */
   int begin(void);
 
-protected:
+ protected:
   /**
    * @fn writeReg
    * @brief Write register value through SPI bus
@@ -1594,7 +1569,7 @@ protected:
    */
   virtual uint8_t readReg(uint8_t reg, void *pBuf, size_t size);
 
-private:
+ private:
   uint8_t _csPin;
 };
 #endif
